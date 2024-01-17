@@ -1,0 +1,25 @@
+# this is still a draft and totally not production ready, expect false positives!
+
+alert smtp any any -> any any (msg:"Possible SMTP Smuggling Attempt - Double Message-ID Headers"; flow:established,to_server; content:"Message-ID|3A|"; nocase; content:"Message-ID|3A|"; nocase; reference:url,smtpsmuggling.com; classtype:misc-attack; sid:1; rev:1;)
+alert smtp any any -> any any (msg:"Possible SMTP Smuggling Attempt - Double RCPT Headers"; flow:established,to_server; content:"RCPT TO|3A|"; nocase; content:"RCPT TO|3A|"; nocase; reference:url,smtpsmuggling.com; classtype:misc-attack; sid:9; rev:1;)
+
+# \n.\n # |0a 2e 0a|
+alert smtp any any -> any any (msg:"Possible SMTP Smuggling Attempt - type1 \\n.\\n"; flow:established,to_server; content:"|0a 2e 0a|"; reference:url,smtpsmuggling.com; classtype:misc-attack; sid:2; rev:1;)
+
+# \n.\r |0a 2e 0d|
+alert smtp any any -> any any (msg:"Possible SMTP Smuggling Attempt - type2 \\n.\\r"; flow:established,to_server; content:"|0a 2e 0d|"; reference:url,smtpsmuggling.com; classtype:misc-attack; sid:3; rev:1;)
+
+# \r.\n |0d 2e 0a|
+alert smtp any any -> any any (msg:"Possible SMTP Smuggling Attempt - type3 \\r.\\r"; flow:established,to_server; content:"|0d 2e 0a|"; reference:url,smtpsmuggling.com; classtype:misc-attack; sid:4; rev:1;)
+
+# \r.\n |0d 2e 0d|
+alert smtp any any -> any any (msg:"Possible SMTP Smuggling Attempt - type4 \\r.\\r"; flow:established,to_server; content:"|0d 2e 0d|"; reference:url,smtpsmuggling.com; classtype:misc-attack; sid:5; rev:1;)
+
+# \n.\r\n |0a 2e 0d 0a|
+alert smtp any any -> any any (msg:"Possible SMTP Smuggling Attempt - type5 \\n.\\r\\n"; flow:established,to_server; content:"|0a 2e 0d 0a|"; reference:url,smtpsmuggling.com; classtype:misc-attack; sid:6; rev:1;)
+
+# \r.\r\n |0d 2e 0d 0a|
+alert smtp any any -> any any (msg:"Possible SMTP Smuggling Attempt - type6 \\n.\\r\\n"; flow:established,to_server; content:"|0d 2e 0d 0a|"; reference:url,smtpsmuggling.com; classtype:misc-attack; sid:7; rev:1;)
+
+# \r\n\x00.\r\n |0d 0a 00 2e 0d 0a|
+alert smtp any any -> any any (msg:"Possible SMTP Smuggling Attempt - type7 \\r\\n\\x00.\\r\\n"; flow:established,to_server; content:"|0d 0a 00 2e 0d 0a|"; reference:url,smtpsmuggling.com; classtype:misc-attack; sid:8; rev:1;)
